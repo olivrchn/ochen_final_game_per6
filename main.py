@@ -50,19 +50,11 @@ class Game:
             p = Platform(*plat)
             self.all_sprites.add(p)
             self.platforms.add(p)
-        for i in range(0,100):
-            m = Mob(30,30,(100,255,100))
-            self.all_sprites.add(m)
-            self.enemies.add(m)
         self.run()
-    def game_over(self):
-        if self.player.pos.x > 800 or self.player.pos.x < 0:
-            self.player.death = True
     def run(self):
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            
             self.events()
             self.update()
             self.draw()
@@ -73,9 +65,6 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                    self.player.jump()
     def update(self):
         self.all_sprites.update()
         
@@ -84,12 +73,7 @@ class Game:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
                 self.player.standing = True
-                if hits[0].variant == "disappearing":
-                    hits[0].kill()
-                elif hits[0].variant == "bouncey":
-                    self.player.pos.y = hits[0].rect.top
-                    self.player.vel.y = -PLAYER_JUMP
-                else:
+                if hits[0].variant == "normal":
                     self.player.pos.y = hits[0].rect.top
                     self.player.vel.y = 0
             else:
@@ -97,9 +81,6 @@ class Game:
 
 
     def draw(self):
-        if self.player.death == True:
-            self.player.death == True
-            self.screen.fill(BLACK)
         self.screen.fill(GREEN)
         self.all_sprites.draw(self.screen)
         self.draw_text("SCORE: " + str(self.score), 40, WHITE, WIDTH/2, HEIGHT/2)
