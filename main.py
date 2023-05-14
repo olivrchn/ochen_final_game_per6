@@ -15,79 +15,6 @@ import pygame as pg
 # import settings 
 from settings import *
 
-# use 2D array for the maze
-maze = [
-    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
-    [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
-    [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
-    [1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
-    [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
-    [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
-    [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
-    [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0], 
-    [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0], 
-    [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0], 
-    [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1], 
-    [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1], 
-    [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1], 
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
-    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1]
-]
-
-# check inbounds
-def inbounds(x, y, event):
-    if event.key == pg.K_LEFT:
-        if x - 40 < 0 or x - 40 > WIDTH-40:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_RIGHT:
-        if x + 40 < 0 or x + 40 > WIDTH-40:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_UP:
-        if y - 40 < 0 or y - 40 > HEIGHT-40:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_DOWN:
-        if y + 40 < 0 or y + 40 > HEIGHT-40:
-            return False 
-        else:
-            return True
-    
-# check if colliding with red recd
-def collide(x, y, event):
-    if event.key == pg.K_LEFT:
-        if maze[y//40][(x-40)//40] != 1:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_RIGHT:
-        if maze[y//40][(x+40)//40] != 1:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_UP:
-        if maze[(y-40)//40][x//40] != 1:
-            return False
-        else:
-            return True
-    elif event.key == pg.K_DOWN:
-        if maze[(y+40)//40][x//40] != 1:
-            return False
-        else:
-            return True
-
-
-
-
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -112,6 +39,31 @@ class Game:
         self.x = 0
         self.y = 0
         self.game_gone = False
+
+        # use 2D array for the maze
+        self.maze = [
+            [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0], 
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1], 
+            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1]
+        ]
+
         self.run()
 
     def run(self):
@@ -134,7 +86,7 @@ class Game:
 
             # checks if key was pressed
             if event.type == pg.KEYDOWN:
-                if inbounds(self.x, self.y, event) and collide(self.x, self.y, event):
+                if self.inbounds(self.x, self.y, event) and self.collide(self.x, self.y, event):
                     if event.key == pg.K_LEFT:
                         self.x -= 40
                     elif event.key == pg.K_RIGHT:
@@ -155,8 +107,8 @@ class Game:
             self.game_over()
         else:
             # draw the maze
-            for row in range(len(maze)):
-                for col in range(len(maze[row])):
+            for row in range(len(self.maze)):
+                for col in range(len(self.maze[row])):
                     self.cell(row,col)
             # Display the steve image
             self.screen.blit(self.image, (self.x, self.y))
@@ -190,12 +142,58 @@ class Game:
     def cell(self, row, col):
         x = col * CELL_WIDTH
         y = row * CELL_HEIGHT
-        if maze[row][col] == 1:
+        if self.maze[row][col] == 1:
             color = GREEN
         else:
             color = RED
         # draw possible paths/walls on screen
         pg.draw.rect(self.screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
+
+    # check inbounds
+    def inbounds(self, x, y, event):
+        if event.key == pg.K_LEFT:
+            if x - 40 < 0 or x - 40 > WIDTH-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_RIGHT:
+            if x + 40 < 0 or x + 40 > WIDTH-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_UP:
+            if y - 40 < 0 or y - 40 > HEIGHT-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_DOWN:
+            if y + 40 < 0 or y + 40 > HEIGHT-40:
+                return False 
+            else:
+                return True
+        
+    # check if colliding with red recd
+    def collide(self, x, y, event):
+        if event.key == pg.K_LEFT:
+            if self.maze[y//40][(x-40)//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_RIGHT:
+            if self.maze[y//40][(x+40)//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_UP:
+            if self.maze[(y-40)//40][x//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_DOWN:
+            if self.maze[(y+40)//40][x//40] != 1:
+                return False
+            else:
+                return True
  
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font(self.font_name, size)
