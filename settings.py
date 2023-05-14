@@ -12,3 +12,4 @@ PURPLE = (125,0,125)
 FPS = 60
 START = [0,0]
 TITLE = "Oliver's Maze"
+FONT_NAME = "arial"
