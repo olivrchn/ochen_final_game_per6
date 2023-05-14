@@ -36,10 +36,10 @@ screen = pg.display.set_mode((1200,800))
 pg.display.set_caption("Oliver's Maze")
 
 # set the clock for the games frame rate
-clock = pg.time.Clock()
+# clock = pg.time.Clock()
 
 # set the fps
-clock.tick(FPS)
+# clock.tick(FPS)
 
 # drawing the cell
 def cell(row, col):
@@ -55,6 +55,14 @@ def cell(row, col):
 # fill screen will color
 screen.fill(PURPLE)
 
+# load image of the main sprite
+image = pg.image.load('steve.jpg').convert_alpha()
+
+# resize the image to fit in the cell
+image = pg.transform.scale(image, (40,40))
+
+x = 0
+y = 0
 # this ensures main game loop will quit
 running = True
 while running:
@@ -67,6 +75,20 @@ while running:
         for col in range(len(maze[row])):
             cell(row,col)
     
+    if event.type == pg.KEYDOWN:
+            if event.key == pg.K_LEFT:
+                x -= 40
+            elif event.key == pg.K_RIGHT:
+                x += 40
+            elif event.key == pg.K_UP:
+                y -= 40
+            elif event.key == pg.K_DOWN:
+                y += 40
+
+    # Display the steve image
+    screen.blit(image, (x, y))
+
+    # update the window
     pg.display.flip()
 
 pg.quit()
