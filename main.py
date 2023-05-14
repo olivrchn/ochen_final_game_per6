@@ -102,6 +102,28 @@ def collide(x, y, event):
         else:
             return True
 
+# game over function
+def game_over():
+    font = pg.font.Font(None, 90)
+
+    # Set the game over message
+    game_over_message = "You Win! Game Over!"
+
+    # Render the game over message
+    game_over_text = font.render(game_over_message, True, WHITE)
+
+    # Get the size of the game over message
+    game_over_text_size = game_over_text.get_size()
+
+    # Calculate the position of the game over message
+    game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2)
+
+    # redraw the screen with black
+    screen.fill(BLACK)
+
+    # display the text on screen
+    screen.blit(game_over_text, game_over_text_pos)
+
 # drawing the cell
 def cell(row, col):
     x = col * CELL_WIDTH
@@ -143,13 +165,16 @@ while running:
                 elif event.key == pg.K_DOWN:
                     y += 40
 
-    # draw the maze
-    for row in range(len(maze)):
-        for col in range(len(maze[row])):
-            cell(row,col)
-    
-    # Display the steve image
-    screen.blit(image, (x, y))
+    # check if reaching target spot
+    if x == WIDTH-40 and y == HEIGHT-40:
+        game_over()
+    else:
+        # draw the maze
+        for row in range(len(maze)):
+            for col in range(len(maze[row])):
+                cell(row,col)
+        # Display the steve image
+        screen.blit(image, (x, y))
 
     # update the window
     pg.display.flip()
