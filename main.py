@@ -79,7 +79,29 @@ def inbounds(x, y, event):
         else:
             return True
     
-        
+# check if colliding with red recd
+def collide(x, y, event):
+    print("collide: ", x, y)
+    if event.key == pg.K_LEFT:
+        if maze[(x-40)//40][y] != 1:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_RIGHT:
+        if maze[(x+40)//40][y] != 1:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_UP:
+        if maze[x][(y-40)//40] != 1:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_DOWN:
+        if maze[x][(y+40)//40] != 1:
+            return False
+        else:
+            return True
 
 # drawing the cell
 def cell(row, col):
@@ -112,7 +134,7 @@ while running:
 
         # checks if key was pressed
         if event.type == pg.KEYDOWN:
-            if inbounds(x, y, event):
+            if inbounds(x, y, event) and collide(x, y, event):
                 if event.key == pg.K_LEFT:
                     x -= 40
                 elif event.key == pg.K_RIGHT:
