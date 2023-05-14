@@ -5,8 +5,8 @@ My Project is a Python application that allows the user to play a maze game.
 **Features**
 Feature 1: Allows users to see the time on the bottom left and once finished the timer pauses.
 Feature 2: Provides quadrupe direction movement.
-**
-Installation**
+
+**Installation**
 Clone the repository to your local machine.
 Install the required packages by running pip install -r requirements.txt.
 Run the application using python main.py.
