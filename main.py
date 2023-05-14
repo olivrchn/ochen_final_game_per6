@@ -70,12 +70,8 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    # draw the maze
-    for row in range(len(maze)):
-        for col in range(len(maze[row])):
-            cell(row,col)
-    
-    if event.type == pg.KEYDOWN:
+        # checks if key was pressed
+        if event.type == pg.KEYDOWN:
             if event.key == pg.K_LEFT:
                 x -= 40
             elif event.key == pg.K_RIGHT:
@@ -85,6 +81,11 @@ while running:
             elif event.key == pg.K_DOWN:
                 y += 40
 
+    # draw the maze
+    for row in range(len(maze)):
+        for col in range(len(maze[row])):
+            cell(row,col)
+    
     # Display the steve image
     screen.blit(image, (x, y))
 
