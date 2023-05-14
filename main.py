@@ -11,9 +11,22 @@
 
 # import libs
 import pygame as pg
+from math import floor
 
 # import settings 
 from settings import *
+
+class Cooldown():
+    def __init__(self):
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+        # print(self.delta)
+    def timer(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
 
 class Game:
     def __init__(self):
@@ -24,6 +37,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
+        self.font_name = pg.font.match_font(FONT_NAME)
 
         # fill screen will PURPLE
         self.screen.fill(PURPLE)
@@ -39,7 +53,11 @@ class Game:
         self.x = 0
         self.y = 0
         self.game_gone = False
-
+        
+        # create Cooldown object
+        self.cd = Cooldown()
+        self.cd.timer()
+        
         # use 2D array for the maze
         self.maze = [
             [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -101,6 +119,10 @@ class Game:
         if self.x == WIDTH-40 and self.y == HEIGHT-40:
             self.game_gone = True
         
+        # don't tick after game_gone
+        if self.game_gone != True:
+            self.cd.ticking()
+        
     def draw(self):
         # check if reaching target spot
         if self.game_gone:
@@ -112,6 +134,8 @@ class Game:
                     self.cell(row,col)
             # Display the steve image
             self.screen.blit(self.image, (self.x, self.y))
+
+        self.draw_text(str(self.cd.delta) + " seconds", 40, WHITE, 130, HEIGHT-60)
 
         # update the window
         pg.display.flip()
