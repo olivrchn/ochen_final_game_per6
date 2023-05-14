@@ -11,14 +11,9 @@
 
 # import libs
 import pygame as pg
-import os
+
 # import settings 
 from settings import *
-# from pg.sprite import Sprite
-
-# set up assets folders
-game_folder = os.path.dirname(__file__)
-img_folder = os.path.join(game_folder, "img")
 
 # use 2D array for the maze
 maze = [
