@@ -17,7 +17,6 @@ from settings import *
 
 # use 2D array for the maze
 maze = [
-    #1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
     [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
     [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
@@ -39,22 +38,6 @@ maze = [
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1]
 ]
-
-
-# init pygame
-pg.init()
-
-# set the dimension of the screen that the maze will display on
-screen = pg.display.set_mode((1200,800))
-
-# set the name of the game window
-pg.display.set_caption("Oliver's Maze")
-
-# set the clock for the games frame rate
-# clock = pg.time.Clock()
-
-# set the fps
-# clock.tick(FPS)
 
 # check inbounds
 def inbounds(x, y, event):
@@ -102,83 +85,127 @@ def collide(x, y, event):
         else:
             return True
 
-# game over function
-def game_over():
-    font = pg.font.Font(None, 90)
 
-    # Set the game over message
-    game_over_message = "You Win! Game Over!"
 
-    # Render the game over message
-    game_over_text = font.render(game_over_message, True, WHITE)
 
-    # Get the size of the game over message
-    game_over_text_size = game_over_text.get_size()
+class Game:
+    def __init__(self):
+        # initialize game window, etc
+        pg.init()
+        pg.mixer.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
+        self.running = True
 
-    # Calculate the position of the game over message
-    game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2)
+        # fill screen will PURPLE
+        self.screen.fill(PURPLE)
 
-    # redraw the screen with black
-    screen.fill(BLACK)
+        # load image of the main sprite
+        self.image = pg.image.load('steve.jpg').convert_alpha()
 
-    # display the text on screen
-    screen.blit(game_over_text, game_over_text_pos)
+        # resize the image to fit in the cell
+        self.image = pg.transform.scale(self.image, (40, 40))
 
-# drawing the cell
-def cell(row, col):
-    x = col * CELL_WIDTH
-    y = row * CELL_HEIGHT
-    if maze[row][col] == 1:
-        color = GREEN
-    else:
-        color = RED
-    # draw possible paths/walls on screen
-    pg.draw.rect(screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
+    def new(self):
+        # start a new game
+        self.x = 0
+        self.y = 0
+        self.game_gone = False
+        self.run()
 
-# fill screen will color
-screen.fill(PURPLE)
+    def run(self):
+        # Game Loop
+        self.playing = True
+        while self.playing:
+            self.clock.tick(FPS)
+            self.events()
+            self.update()
+            self.draw()
 
-# load image of the main sprite
-image = pg.image.load('steve.jpg').convert_alpha()
+    def events(self):
+        # Game Loop - events
+        for event in pg.event.get():
+            # check for closing window
+            if event.type == pg.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
 
-# resize the image to fit in the cell
-image = pg.transform.scale(image, (40,40))
+            # checks if key was pressed
+            if event.type == pg.KEYDOWN:
+                if inbounds(self.x, self.y, event) and collide(self.x, self.y, event):
+                    if event.key == pg.K_LEFT:
+                        self.x -= 40
+                    elif event.key == pg.K_RIGHT:
+                        self.x += 40
+                    elif event.key == pg.K_UP:
+                        self.y -= 40
+                    elif event.key == pg.K_DOWN:
+                        self.y += 40
 
-x = 0
-y = 0
-# this ensures main game loop will quit
-running = True
-while running:
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            running = False
+    def update(self):
+        # Game Loop - Update
+        if self.x == WIDTH-40 and self.y == HEIGHT-40:
+            self.game_gone = True
+        
+    def draw(self):
+        # check if reaching target spot
+        if self.game_gone:
+            self.game_over()
+        else:
+            # draw the maze
+            for row in range(len(maze)):
+                for col in range(len(maze[row])):
+                    self.cell(row,col)
+            # Display the steve image
+            self.screen.blit(self.image, (self.x, self.y))
 
-        # checks if key was pressed
-        if event.type == pg.KEYDOWN:
-            if inbounds(x, y, event) and collide(x, y, event):
-                if event.key == pg.K_LEFT:
-                    x -= 40
-                elif event.key == pg.K_RIGHT:
-                    x += 40
-                elif event.key == pg.K_UP:
-                    y -= 40
-                elif event.key == pg.K_DOWN:
-                    y += 40
+        # update the window
+        pg.display.flip()
 
-    # check if reaching target spot
-    if x == WIDTH-40 and y == HEIGHT-40:
-        game_over()
-    else:
-        # draw the maze
-        for row in range(len(maze)):
-            for col in range(len(maze[row])):
-                cell(row,col)
-        # Display the steve image
-        screen.blit(image, (x, y))
+    # game over function
+    def game_over(self):
+        font = pg.font.Font(None, 90)
 
-    # update the window
-    pg.display.flip()
+        # Set the game over message
+        game_over_message = "You Win! Game Over!"
+
+        # Render the game over message
+        game_over_text = font.render(game_over_message, True, WHITE)
+
+        # Get the size of the game over message
+        game_over_text_size = game_over_text.get_size()
+
+        # Calculate the position of the game over message
+        game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2)
+
+        # redraw the screen with black
+        self.screen.fill(BLACK)
+
+        # display the text on screen
+        self.screen.blit(game_over_text, game_over_text_pos)
+
+    # drawing the cell
+    def cell(self, row, col):
+        x = col * CELL_WIDTH
+        y = row * CELL_HEIGHT
+        if maze[row][col] == 1:
+            color = GREEN
+        else:
+            color = RED
+        # draw possible paths/walls on screen
+        pg.draw.rect(self.screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
+ 
+    def draw_text(self, text, size, color, x, y):
+        font = pg.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
+
+g = Game()
+while g.running:
+    g.new()
 
 pg.quit()
-
-        
