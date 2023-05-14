@@ -81,24 +81,23 @@ def inbounds(x, y, event):
     
 # check if colliding with red recd
 def collide(x, y, event):
-    print("collide: ", x, y)
     if event.key == pg.K_LEFT:
-        if maze[(x-40)//40][y] != 1:
+        if maze[y//40][(x-40)//40] != 1:
             return False
         else:
             return True
     elif event.key == pg.K_RIGHT:
-        if maze[(x+40)//40][y] != 1:
+        if maze[y//40][(x+40)//40] != 1:
             return False
         else:
             return True
     elif event.key == pg.K_UP:
-        if maze[x][(y-40)//40] != 1:
+        if maze[(y-40)//40][x//40] != 1:
             return False
         else:
             return True
     elif event.key == pg.K_DOWN:
-        if maze[x][(y+40)//40] != 1:
+        if maze[(y+40)//40][x//40] != 1:
             return False
         else:
             return True
