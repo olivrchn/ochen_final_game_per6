@@ -56,6 +56,31 @@ pg.display.set_caption("Oliver's Maze")
 # set the fps
 # clock.tick(FPS)
 
+# check inbounds
+def inbounds(x, y, event):
+    if event.key == pg.K_LEFT:
+        if x - 40 < 0 or x - 40 > WIDTH-40:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_RIGHT:
+        if x + 40 < 0 or x + 40 > WIDTH-40:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_UP:
+        if y - 40 < 0 or y - 40 > HEIGHT-40:
+            return False
+        else:
+            return True
+    elif event.key == pg.K_DOWN:
+        if y + 40 < 0 or y + 40 > HEIGHT-40:
+            return False 
+        else:
+            return True
+    
+        
+
 # drawing the cell
 def cell(row, col):
     x = col * CELL_WIDTH
@@ -87,14 +112,15 @@ while running:
 
         # checks if key was pressed
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_LEFT:
-                x -= 40
-            elif event.key == pg.K_RIGHT:
-                x += 40
-            elif event.key == pg.K_UP:
-                y -= 40
-            elif event.key == pg.K_DOWN:
-                y += 40
+            if inbounds(x, y, event):
+                if event.key == pg.K_LEFT:
+                    x -= 40
+                elif event.key == pg.K_RIGHT:
+                    x += 40
+                elif event.key == pg.K_UP:
+                    y -= 40
+                elif event.key == pg.K_DOWN:
+                    y += 40
 
     # draw the maze
     for row in range(len(maze)):
