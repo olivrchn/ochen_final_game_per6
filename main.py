@@ -11,98 +11,234 @@
 
 # import libs
 import pygame as pg
-import os
+from math import floor
+
 # import settings 
 from settings import *
-from sprites import *
-# from pg.sprite import Sprite
 
-# set up assets folders
-game_folder = os.path.dirname(__file__)
-img_folder = os.path.join(game_folder, "img")
-
-# create game class in order to pass properties to the sprites file
+class Cooldown():
+    def __init__(self):
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+        # print(self.delta)
+    def timer(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
 
 class Game:
     def __init__(self):
-        # init game window etc.
+        # initialize game window, etc
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption("my game")
+        pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
-        print(self.screen)
+        self.font_name = pg.font.match_font(FONT_NAME)
+
+        # fill screen will PURPLE
+        self.screen.fill(PURPLE)
+
+        # load image of the main sprite
+        self.image = pg.image.load('steve.jpg').convert_alpha()
+
+        # resize the image to fit in the cell
+        self.image = pg.transform.scale(self.image, (41, 41))
+
     def new(self):
-        # starting a new game
-        self.score = 0
-        self.all_sprites = pg.sprite.Group()
-        self.platforms = pg.sprite.Group()
-        self.enemies = pg.sprite.Group()
-        self.player = Player(self)
-        self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
-        # self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
-        self.all_sprites.add(self.plat1)
-        self.platforms.add(self.plat1)
+        # start a new game
+        self.x = 0
+        self.y = 0
+        self.game_gone = False
         
-        self.all_sprites.add(self.player)
-        for plat in PLATFORM_LIST:
-            p = Platform(*plat)
-            self.all_sprites.add(p)
-            self.platforms.add(p)
+        # create Cooldown object
+        self.cd = Cooldown()
+        self.cd.timer()
+        
+        # use 2D array for the maze
+        self.maze = [
+            [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+            [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], 
+            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1], 
+            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+        ]
+
         self.run()
+
     def run(self):
+        # Game Loop
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
-    
+
     def events(self):
+        # Game Loop - events
         for event in pg.event.get():
+            # check for closing window
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
                 self.running = False
+
+            # checks if key was pressed
+            if event.type == pg.KEYDOWN:
+                if self.inbounds(self.x, self.y, event) and self.collide(self.x, self.y, event):
+                    if event.key == pg.K_LEFT:
+                        self.x -= 40
+                    elif event.key == pg.K_RIGHT:
+                        self.x += 40
+                    elif event.key == pg.K_UP:
+                        self.y -= 40
+                    elif event.key == pg.K_DOWN:
+                        self.y += 40
+
     def update(self):
-        self.all_sprites.update()
+        # Game Loop - Update
+        if self.x == WIDTH-40 and self.y == HEIGHT-40:
+            self.game_gone = True
         
-        # if the player is falling
-        if self.player.vel.y > 0:
-            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
-            if hits:
-                self.player.standing = True
-                if hits[0].variant == "normal":
-                    self.player.pos.y = hits[0].rect.top
-                    self.player.vel.y = 0
-            else:
-                self.player.standing = False
-
-
+        # don't tick after game_gone
+        if self.game_gone != True:
+            self.cd.ticking()
+        
     def draw(self):
-        self.screen.fill(GREEN)
-        self.all_sprites.draw(self.screen)
-        self.draw_text("SCORE: " + str(self.score), 40, WHITE, WIDTH/2, HEIGHT/2)
-        # is this a method or a function?
+        # check if reaching target spot
+        if self.game_gone:
+            self.game_over()
+        else:
+            # draw the maze
+            for row in range(len(self.maze)):
+                for col in range(len(self.maze[row])):
+                    self.cell(row,col)
+            self.grid()
+            # Display the steve image
+            self.screen.blit(self.image, (self.x, self.y))
+
+        self.draw_text(str(self.cd.delta) + " seconds", 40, WHITE, 130, HEIGHT-60)
+
+        
+
+        # update the window
         pg.display.flip()
+
+    # game over function
+    def game_over(self):
+        font = pg.font.Font(None, 90)
+
+        # Set the game over message
+        game_over_message = "You Win! Game Over!"
+
+        # Render the game over message
+        game_over_text = font.render(game_over_message, True, WHITE)
+
+        # Get the size of the game over message
+        game_over_text_size = game_over_text.get_size()
+
+        # Calculate the position of the game over message
+        game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2)
+
+        # redraw the screen with black
+        self.screen.fill(BLACK)
+
+        # display the text on screen
+        self.screen.blit(game_over_text, game_over_text_pos)
+
+    # drawing the cell
+    def cell(self, row, col):
+        x = col * CELL_WIDTH
+        y = row * CELL_HEIGHT
+        if self.maze[row][col] == 1:
+            color = BLUE
+        elif self.maze[row][col] == 2:
+            color = GREEN
+        else:
+            color = RED
+        # draw possible paths/walls on screen
+        pg.draw.rect(self.screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
+
+    # draw lines so player knows how to move
+    def grid(self):
+        for x in range(0, WIDTH, CELL_WIDTH):
+            pg.draw.line(self.screen, WHITE, (x,0), (x, HEIGHT))
+        for y in range(0, HEIGHT, CELL_HEIGHT):
+            pg.draw.line(self.screen, WHITE, (0, y), (WIDTH, y))
+
+    # check inbounds
+    def inbounds(self, x, y, event):
+        if event.key == pg.K_LEFT:
+            if x - 40 < 0 or x - 40 > WIDTH-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_RIGHT:
+            if x + 40 < 0 or x + 40 > WIDTH-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_UP:
+            if y - 40 < 0 or y - 40 > HEIGHT-40:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_DOWN:
+            if y + 40 < 0 or y + 40 > HEIGHT-40:
+                return False 
+            else:
+                return True
+        
+    # check if colliding with red recd
+    def collide(self, x, y, event):
+        if event.key == pg.K_LEFT:
+            if self.maze[y//40][(x-40)//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_RIGHT:
+            if self.maze[y//40][(x+40)//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_UP:
+            if self.maze[(y-40)//40][x//40] != 1:
+                return False
+            else:
+                return True
+        elif event.key == pg.K_DOWN:
+            if self.maze[(y+40)//40][x//40] != 1 and self.maze[(y+40)//40][x//40] != 2:
+                return False
+            else:
+                return True
+ 
     def draw_text(self, text, size, color, x, y):
-        font_name = pg.font.match_font('arial')
-        font = pg.font.Font(font_name, size)
+        font = pg.font.Font(self.font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
-        text_rect.midtop = (x,y)
+        text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
-    def get_mouse_now(self):
-        x,y = pg.mouse.get_pos()
-        return (x,y)
-    
 
-
-# instantiate the game class...
 g = Game()
-
-# kick off the game loop
 while g.running:
     g.new()
 
