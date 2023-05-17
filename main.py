@@ -16,6 +16,7 @@ from math import floor
 # import settings 
 from settings import *
 
+# allow for a time stamp at the bottom
 class Cooldown():
     def __init__(self):
         self.current_time = 0
@@ -28,6 +29,7 @@ class Cooldown():
     def timer(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
 
+# the class that the game is run upon
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -60,26 +62,26 @@ class Game:
         
         # use 2D array for the maze
         self.maze = [
-            [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
-            [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
-            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
             [1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
-            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
-            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
-            [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
-            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
-            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
-            [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0], 
-            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+            [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0], 
+            [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0], 
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
             [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], 
             [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], 
-            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
-            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1], 
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
-            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2]
+            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1], 
+            [0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
         ]
 
         self.run()
@@ -167,21 +169,22 @@ class Game:
     def cell(self, row, col):
         x = col * CELL_WIDTH
         y = row * CELL_HEIGHT
+        # In self.maze, if a value is 1 the color is red
         if self.maze[row][col] == 1:
-            color = PURPLE
+            color = RED
         elif self.maze[row][col] == 2:
             color = GREEN
         else:
-            color = RED
+            color = PURPLE
         # draw possible paths/walls on screen
         pg.draw.rect(self.screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
 
     # draws a grid
-    def grid(self):
-        for x in range( WIDTH, CELL_WIDTH):
-            pg.draw.line(self.screen, (x, 0), (x, HEIGHT))
-        for y in range( HEIGHT, CELL_HEIGHT):
-            pg.draw.line(self.screen, (0, y), (WIDTH, y))
+    # def grid(self):
+    #     for x in range( WIDTH, CELL_WIDTH):
+    #         pg.draw.line(self.screen, (x, 0), (x, HEIGHT))
+    #     for y in range( HEIGHT, CELL_HEIGHT):
+    #         pg.draw.line(self.screen, (0, y), (WIDTH, y))
 
     # check inbounds
     def inbounds(self, x, y, event):
@@ -206,29 +209,31 @@ class Game:
             else:
                 return True
         
-    # check if colliding with red recd
+    # check if colliding with wall
     def collide(self, x, y, event):
         if event.key == pg.K_LEFT:
-            if self.maze[y//40][(x-40)//40] != 1 and self.maze[(y+40)//40][x//40] != 2:
+            if self.maze[y//40][(x-40)//40] != 1:
                 return False
             else:
                 return True
         elif event.key == pg.K_RIGHT:
-            if self.maze[y//40][(x+40)//40] != 1 and self.maze[(y+40)//40][x//40] != 2:
+            if self.maze[y//40][(x+40)//40] != 1 :
                 return False
             else:
                 return True
         elif event.key == pg.K_UP:
-            if self.maze[(y-40)//40][x//40] != 1 and self.maze[(y+40)//40][x//40] != 2:
+            if self.maze[(y-40)//40][x//40] != 1:
                 return False
             else:
                 return True
+        # since the player must go down in order to win, this is the only fuction with that cabability
         elif event.key == pg.K_DOWN:
             if self.maze[(y+40)//40][x//40] != 1 and self.maze[(y+40)//40][x//40] != 2:
                 return False
             else:
                 return True
  
+    # draws the text once the game has been won.
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font(self.font_name, size)
         text_surface = font.render(text, True, color)

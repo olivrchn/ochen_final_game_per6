@@ -8,8 +8,10 @@ WHITE = (255,255,255)
 BLUE = (50,50,255)
 RED = (255,50,50)
 GREEN = (50,255,0)
-PURPLE = (125,0,125)
-FPS = 60
+PURPLE = (110,0,110)
+FPS = 120
 START = [0,0]
 TITLE = "Oliver's Maze"
 FONT_NAME = "arial"
+
+
