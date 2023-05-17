@@ -23,11 +23,11 @@ class Cooldown():
         self.event_time = 0
         self.delta = 0
     def ticking(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.current_time = floor((pg.time.get_ticks())/10)
         self.delta = self.current_time - self.event_time
         # print(self.delta)
     def timer(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.current_time = floor((pg.time.get_ticks())/10)
 
 # the class that the game is run upon
 class Game:
@@ -134,11 +134,11 @@ class Game:
             for row in range(len(self.maze)):
                 for col in range(len(self.maze[row])):
                     self.cell(row,col)
-            # self.grid()
+            self.grid()
             # Display the steve image
             self.screen.blit(self.image, (self.x, self.y))
 
-        self.draw_text(str(self.cd.delta) + " seconds", 40, WHITE, 130, HEIGHT-60)
+        self.draw_text(str(self.cd.delta/100) + " seconds", 40, WHITE, 130, HEIGHT-60)
 
         # update the window
         pg.display.flip()
@@ -180,11 +180,11 @@ class Game:
         pg.draw.rect(self.screen, color, [x, y, CELL_WIDTH, CELL_HEIGHT])
 
     # draws a grid
-    # def grid(self):
-    #     for x in range( WIDTH, CELL_WIDTH):
-    #         pg.draw.line(self.screen, (x, 0), (x, HEIGHT))
-    #     for y in range( HEIGHT, CELL_HEIGHT):
-    #         pg.draw.line(self.screen, (0, y), (WIDTH, y))
+    def grid(self):
+        for x in range(0, WIDTH, CELL_WIDTH):
+            for y in range(0, WIDTH, CELL_HEIGHT):
+                rect = pg.Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
+                pg.draw.rect(self.screen, GRAY, rect, 1)
 
     # check inbounds
     def inbounds(self, x, y, event):
