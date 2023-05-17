@@ -54,6 +54,7 @@ class Game:
         # start a new game
         self.x = 0
         self.y = 0
+        self.key_pressed = 0
         self.game_gone = False
         
         # create Cooldown object
@@ -105,7 +106,9 @@ class Game:
                 self.running = False
 
             # checks if key was pressed
+            
             if event.type == pg.KEYDOWN:
+                self.key_pressed = self.key_pressed + 1
                 if self.inbounds(self.x, self.y, event) and self.collide(self.x, self.y, event):
                     if event.key == pg.K_LEFT:
                         self.x -= 40
@@ -114,7 +117,7 @@ class Game:
                     elif event.key == pg.K_UP:
                         self.y -= 40
                     elif event.key == pg.K_DOWN:
-                        self.y += 40
+                        self.y += 40 
 
     def update(self):
         # Game Loop - Update
@@ -145,10 +148,11 @@ class Game:
 
     # game over function
     def game_over(self):
-        font = pg.font.Font(None, 90)
+        font = pg.font.Font(None, 200)
+        font1 = pg.font.Font(None, 90)
 
         # Set the game over message
-        game_over_message = "You Win! Game Over!"
+        game_over_message = "You Win !"
 
         # Render the game over message
         game_over_text = font.render(game_over_message, True, WHITE)
@@ -157,13 +161,19 @@ class Game:
         game_over_text_size = game_over_text.get_size()
 
         # Calculate the position of the game over message
-        game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2)
+        game_over_text_pos = ((WINDOW[0]-game_over_text_size[0])/2, (WINDOW[1]-game_over_text_size[1])/2- 150)
 
         # redraw the screen with black
         self.screen.fill(BLACK)
 
         # display the text on screen
         self.screen.blit(game_over_text, game_over_text_pos)
+
+        key_pressed_msg = str("You pressed " + str(self.key_pressed) + " keys this game !")
+        key_pressed_txt = font1.render(key_pressed_msg, True, WHITE)
+        key_pressed_txt_size = key_pressed_txt.get_size()
+        key_pressed_txt_pos = ((WINDOW[0] - key_pressed_txt_size[0])/2, (WINDOW[1] - key_pressed_txt_size[1])/2 + 50)
+        self.screen.blit(key_pressed_txt, key_pressed_txt_pos)
 
     # drawing the cell
     def cell(self, row, col):
@@ -240,6 +250,7 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
+        
 
 g = Game()
 while g.running:
