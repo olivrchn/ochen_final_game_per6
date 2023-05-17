@@ -134,7 +134,7 @@ class Game:
             for row in range(len(self.maze)):
                 for col in range(len(self.maze[row])):
                     self.cell(row,col)
-            self.grid()
+            # self.grid()
             # Display the steve image
             self.screen.blit(self.image, (self.x, self.y))
 
