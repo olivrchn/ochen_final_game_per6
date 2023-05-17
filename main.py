@@ -107,7 +107,7 @@ class Game:
 
             # checks if key was pressed
             
-            if event.type == pg.KEYDOWN:
+            if event.type == pg.KEYDOWN and self.game_gone == False:
                 self.key_pressed = self.key_pressed + 1
                 if self.inbounds(self.x, self.y, event) and self.collide(self.x, self.y, event):
                     if event.key == pg.K_LEFT:
